@@ -1,0 +1,40 @@
+NginX server
+
+path to config
+  /etc/nginx/nginx.conf
+
+start/stop/etc
+  sudo service nginx reload
+
+nginx main conf file    /etc/nginx/nginx.conf
+config file             /etc/nginx/sites-enabled/app.node_base.com
+error log file   /var/log/nginx/error.log
+
+
+## Helper commands
+How to know what program is listening on a given port?
+
+  - lsof -i
+  - sudo netstat -peanut
+
+
+## Helper for OpenSSL
+Create the Password File Using the OpenSSL Utilities  (https://www.digitalocean.com/community/tutorials/how-to-set-up-password-authentication-with-nginx-on-ubuntu-14-04)
+
+   	If you have OpenSSL installed on your server, you can create a password file with no additional packages. We will create a hidden file called .htpasswd in the /etc/nginx configuration directory to store our username and password combinations.
+
+	You can add a username to the file using this command. We are using sammy as our username, but you can use whatever name you'd like:
+
+- sudo sh -c "echo -n 'sammy:' >> /etc/nginx/.htpasswd"
+	Next, add an encrypted password entry for the username by typing:
+
+- sudo sh -c "openssl passwd -apr1 >> /etc/nginx/.htpasswd"
+ 	You can repeat this process for additional usernames. You can see how the usernames and encrypted passwords are stored within the file by typing:
+
+	cat /etc/nginx/.htpasswd
+	Output
+	sammy:$apr1$wI1/T0nB$jEKuTJHkTOOWkopnXqC1d1
+
+
+
+  Please find an example config  file for NginX  under the same directory
