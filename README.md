@@ -1,9 +1,11 @@
 How to Configure and Run
 
     Requirements
-        Install Node.js (6.10.2, npm: 4.5.0)
-        Install MySQL (5.7.13)
-        Install MongoDB (3.4.3)
+        Install Node.js (>= 7.10.1 (to use async/await), use npm installed alongside NodeJs)
+        Install MySQL (>= 5.7.13 (you can also use lower versions of mysql))
+        Install MongoDB (>= 3.4.3)
+        TODO
+          ...add remaining.
         
     Configuration
         Make configuration changes in app.config.wrapper.config.js
@@ -16,20 +18,6 @@ How to Configure and Run
                     user
                     password
                 mongodbUrl
-                salesforce
-                    clientId
-                    clientSecret
-                    redirectUri
-                    loginRedirect
-                        failureRedirect
-                        successRedirect
-                analytics
-                    clientId
-                    clientSecret
-                    redirectUri
-                    loginRedirect
-                        failureRedirect
-                        successRedirect
         
     Run
         Import the 
@@ -49,17 +37,15 @@ How to Configure and Run
             LOG_LEVEL (error(0), warn(1), info(2)*, verbose(3), debug(4), silly(5))
         
         Note, * marks as default.
-Api
+
+
+Api Docs
         
     Swagger
-        Ip:Port/swagger. (ex. https://146.185.149.49:3000/swagger/)
+        Ip:Port/swagger. (ex. https://base_node:3000/swagger/)
         Then use https://Ip:Port/api/v1/api-docs.json to get the API's.
-            (ex. https://146.185.149.49:3000/api/v1/api-docs.json)
 
 How to run the API on remote
-
-    Go to remote (ex. ssh root@146.185.149.49 & provide the password)
-    Navigate to source code (ex. cd ~/api/staging/base_node_backend)
 
     Using pm2
         
@@ -124,16 +110,16 @@ OAuth2 Error Responses Cases
     Case 5:  "Not Verified User"
         RESPONSE: {code: 403, name: "OAuth2Error", message: "The user you are trying to access is not verified.", error: "not_verified", error_description: "The user you are trying to access is not verified."}
         
-
-CAUTION
-    
-    Cluster of this application is NOT finished. 
-        1. Storage (session) should be solved.
-        2. Testing on cluster mode.
         
-        
-PRODUCTION SET UP
+PRODUCTION SET UP HELP
     Create a virtual machine
     mysql -> https://www.digitalocean.com/community/tutorials/how-to-install-the-latest-mysql-on-ubuntu-16-04
     mongodb -> https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/              for v3.6.2
-    
+            
+     
+        
+TODOS
+     - Cluster  Integrate.
+     - Cahnge Password.
+     - Docker
+     - GrathQl
