@@ -121,5 +121,6 @@ PRODUCTION SET UP HELP
 TODOS
      - Cluster  Integrate.
      - Cahnge Password.
-     - Docker
-     - GrathQl
+     - Docker.
+     - GrathQl.
+     - CI. - (Jenkins + E2E test)
