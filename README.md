@@ -44,6 +44,7 @@ Api Docs
     Swagger
         Ip:Port/swagger. (ex. https://base_node:3000/swagger/)
         Then use https://Ip:Port/api/v1/api-docs.json to get the API's.
+        (EX. https://localhost:9000/api/v1/api-docs.json)
 
 How to run the API on remote
 
@@ -124,3 +125,4 @@ TODOS
      - Docker.
      - GrathQl.
      - CI. - (Jenkins + E2E test)
+     - Migrate from Swagger 1 to OpenAPI 3 which is the new version of the Swagger
