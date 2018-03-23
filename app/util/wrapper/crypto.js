@@ -13,7 +13,7 @@ module.exports = {
      * @returns {*}
      */
     isValidPassword(hashPassword, password) {
-        bCrypt.compareSync(password, hashPassword);
+        return bCrypt.compareSync(password, hashPassword);
     },
 
     /**
@@ -24,6 +24,6 @@ module.exports = {
      * @returns {*}
      */
     createHash(password) {
-        bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
+        return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
     }
 };

@@ -105,22 +105,14 @@ module.exports = {
              * Unknown Errors
              */
             default:
-                logger.error(
-                    `
-                        ########################
-                        ##### ATTENTION!!! #####
-                        ########################
-                        ##  UNKNOWN EXCEPTION ##
-                    `,
-                    JSON.stringify(error.stack)
-                );
-
-                logger.error(
-                    `
-                        ### General Error ###
-                    `,
-                    JSON.stringify(error)
-                );
+                logger.error(`
+                    ########################
+                    ##### ATTENTION!!! #####
+                    ########################
+                    ##  UNKNOWN EXCEPTION ##
+                `);
+                logger.error(error.message);
+                logger.error(JSON.stringify(error.stack));
 
                 err = new ErrorHandler(500, "InternalError", 'The server encountered an internal error. Please retry the request.');
         }
