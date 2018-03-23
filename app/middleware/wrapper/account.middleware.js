@@ -11,9 +11,9 @@ module.exports = {
      * @param res
      * @param next
      * @description Check the correctness of arguments for account creation.
-     * @returns {*}
+     * @returns {async}
      */
-    validateCreateAccountArgs(req, res, next) {
+    async validateCreateAccountArgs(req, res, next) {
         const missingArgs = expectedAccountArguments.filter((key) => !(req.body[key] || req.body[key] === 0) );
 
         // Validate Expected Args Existence.
