@@ -1,16 +1,13 @@
 "use strict";
 
-const mongoose = require('mongoose'),
-    mysql = require('mysql2/promise');
-
-const util = require('../util/'),
-    logger = util.Logger;
-
+const mongoose = require('mongoose');
+const mysql = require('mysql2/promise');
+const logger = require('../util/').Logger;
 let connection;
 
 
 /**
- * @type function
+ * @type async function
  * @access private
  * @param db_config
  * @description Creates MySQL connection and handles disconnect.
@@ -27,7 +24,7 @@ async function _connectAndHandleDisconnect(db_config) {
             if (err.code === 'PROTOCOL_CONNECTION_LOST') {
                 _connectAndHandleDisconnect(db_config);
             } else {
-                throw err;
+                throw new Error(err);
             }
         });
 
@@ -40,7 +37,6 @@ async function _connectAndHandleDisconnect(db_config) {
     }
 }
 
-
 module.exports = {
 
     mysql: {
@@ -50,11 +46,15 @@ module.exports = {
          * @param db_config
          * @description Initialize MySQL connection.
          */
-        init: (db_config) => {
+        async init(db_config) {
             if (!db_config)
                 throw new Error("`db_config` is not specified.");
 
-            _connectAndHandleDisconnect(db_config).catch((err) => {throw err});
+            try {
+                await _connectAndHandleDisconnect(db_config).catch((err) => {throw err});
+            } catch (err) {
+                throw new Error(err);
+            }
         },
 
         /**
@@ -73,6 +73,7 @@ module.exports = {
          * @description Destroy MySQL connection.
          */
         destroy() {
+            // TODO end connection in a proper way.
             connection && connection.end(() => logger.info('MySQL connection disconnected through app termination'));
         }
     },
@@ -112,7 +113,20 @@ module.exports = {
          * @description Destroy Mongoose connection.
          */
         destroy() {
+            // TODO end connection in a proper way.
             mongoose.disconnect(() => logger.info('Mongoose connection disconnected through app termination'));
         }
     }
 };
+
+/*
+* TODO handle -> correct shut down
+*
+*
+* */
+process.on('exit', () => {
+    logger.warn(`NODE SERVER OVER IT'S WORK at ${(new Date()).toISOString()}`);
+    logger.warn("Disconnection DB's  TODO handle it in a proper way");
+    module.exports.mysql.destroy(); // TODO
+    module.exports.mongoose.destroy(); // TODO
+});
