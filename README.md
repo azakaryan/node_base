@@ -98,19 +98,30 @@ Local .env.js file
         ...
     };    
 
-OAuth2 Error Responses Cases
+OAuth2 
 
-    Case 1: "token Not Found"
-        RESPONSE: {code: 400, name: "OAuth2Error", message: "The access token was not found", error: "invalid_request", error_description: "The access token was not found"}
-    Case 2: "Token Expired"
-        RESPONSE: {code: 401, name: "OAuth2Error", message: "The access token provided has expired.", error: "invalid_token", error_description: "The access token provided has expired."}
-    Case 3: "Wrong Password"
-        RESPONSE: {code: 401, name: "OAuth2Error", message: "The password provided is wrong.", error: "wrong_password", error_description: "The password provided is wrong."}
-    Case 4: "Invalid User"
-        RESPONSE: {code: 404, name: "OAuth2Error", message: "The user you are trying to access is not found.", error: "not_found", error_description: "The user you are trying to access is not found."}
-    Case 5:  "Not Verified User"
-        RESPONSE: {code: 403, name: "OAuth2Error", message: "The user you are trying to access is not verified.", error: "not_verified", error_description: "The user you are trying to access is not verified."}
-        
+    How to get Auth token
+      EX. Using wget
+        wget -qO- --header="Authorization: Basic ZHZfaWQ6ZHZfc2VjcmV0"  --no-check-certificate --post-data "username=armenzakary@gmail.com&password=demandvue&grant_type=password" https://localhost:9000/api/v1/oauth/token
+      
+    How contact the endpoint having token in place.
+      EX. Using wget
+        wget -qO- --header="Authorization: Bearer ea5f40ee163e5aa3faf9f4b97b9a9c8518b1ee15" --no-check-certificate https://localhost:9000/api/v1/users/current
+      append  "Bearer token" to the header
+
+    Error Responses Cases
+    
+        Case 1: "token Not Found"
+            RESPONSE: {code: 400, name: "OAuth2Error", message: "The access token was not found", error: "invalid_request", error_description: "The access token was not found"}
+        Case 2: "Token Expired"
+            RESPONSE: {code: 401, name: "OAuth2Error", message: "The access token provided has expired.", error: "invalid_token", error_description: "The access token provided has expired."}
+        Case 3: "Wrong Password"
+            RESPONSE: {code: 401, name: "OAuth2Error", message: "The password provided is wrong.", error: "wrong_password", error_description: "The password provided is wrong."}
+        Case 4: "Invalid User"
+            RESPONSE: {code: 404, name: "OAuth2Error", message: "The user you are trying to access is not found.", error: "not_found", error_description: "The user you are trying to access is not found."}
+        Case 5:  "Not Verified User"
+            RESPONSE: {code: 403, name: "OAuth2Error", message: "The user you are trying to access is not verified.", error: "not_verified", error_description: "The user you are trying to access is not verified."}
+            
         
 PRODUCTION SET UP HELP
     Create a virtual machine
