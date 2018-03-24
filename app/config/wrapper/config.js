@@ -70,6 +70,12 @@ const config = {
             ACTIVATION_KEY_EXPIRE_TIME: 60 * 60 * 1000, // 1 hour
             FORGOT_PASSWORD_KEY_EXPIRE_TIME: 60 * 60 * 1000, // 1 hour
             TEMPORARY_CSV_EXPIRE_TIME: 5 * 60 * 1000 // 5 min.
+        },
+
+        email: {
+            username: "azakaryantest@gmail.com",
+            password: "Vk3!6P8zK7Pw^,R",
+            contact_support: 'https://github.com/azakaryan/node_base'
         }
     },
 
@@ -107,6 +113,11 @@ const config = {
             ACTIVATION_KEY_EXPIRE_TIME: 60 * 60 * 1000, // 1 hour
             FORGOT_PASSWORD_KEY_EXPIRE_TIME: 60 * 60 * 1000, // 1 hour
             TEMPORARY_CSV_EXPIRE_TIME: 5 * 60 * 1000 // 5 min.
+        },
+
+        email: {
+            username: "azakaryantest@gmail.com",
+            password: "Vk3!6P8zK7P\\w^,R"
         }
     }
 };

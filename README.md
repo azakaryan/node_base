@@ -102,7 +102,7 @@ OAuth2
 
     How to get Auth token
       EX. Using wget
-        wget -qO- --header="Authorization: Basic ZHZfaWQ6ZHZfc2VjcmV0"  --no-check-certificate --post-data "username=armenzakary@gmail.com&password=demandvue&grant_type=password" https://localhost:9000/api/v1/oauth/token
+        wget -qO- --header="Authorization: Basic ZHZfaWQ6ZHZfc2VjcmV0"  --no-check-certificate --post-data "username=armenzakary@gmail.com&password=epam1234&grant_type=password" https://localhost:9000/api/v1/oauth/token
       
     How contact the endpoint having token in place.
       EX. Using wget
