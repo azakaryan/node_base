@@ -1,8 +1,8 @@
 "use strict";
 
-const oauthserver = require('oauth2-server'),
-    Model = require('./model'),
-    server = oauthserver({
+const oauthserver = require('oauth2-server');
+const Model = require('./model');
+const server = oauthserver({
         model: new Model(),
         grants: ['password', 'refresh_token'],
         accessTokenLifetime: 86400,
@@ -49,7 +49,7 @@ module.exports = {
     },
     authorise(req, res, next) {
         const authorise = server.authorise();
-        authorise(req, res, function (err) {
+        authorise(req, res, (err) => {
             if (err)
                 return res.status(err.code).send(_errorHelper(err));
 
