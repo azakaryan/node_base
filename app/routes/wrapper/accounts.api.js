@@ -11,11 +11,10 @@ const router = require('express').Router();
 const oAuth2Server = require('../../oauth2/').OAuth2Server;
 const middleware = require('../../middleware/'),
     accountMiddle = middleware.Account,
-    accountUsersMiddle = middleware.AccountUsers;
+    asyncErrorHandlerMiddle = middleware.AsyncErrorHandler;
 
-const services = require('../../services/'),
-    accountsSVC = services.Accounts,
-    accountUsersSVC = services.AccountUsers;
+const accountsSVC = require('../../services/').Accounts;
+
 
 /**
  * @swagger
@@ -31,14 +30,13 @@ const services = require('../../services/'),
  *      produces:
  *        - application/json
  */
-router.get('/', async (req, res) => {
-    try {
-        const accounts = await accountsSVC.getAllAccounts();
-        res.status(200).json(accounts);
-    } catch (err) {
-        res.status(err.statusCode).json(err);
-    }
-});
+router.get('/',
+    asyncErrorHandlerMiddle(
+        async (req, res) => {
+            const accounts = await accountsSVC.getAllAccounts();
+            res.status(200).json(accounts);
+        }
+    ));
 
 
 /**
@@ -60,16 +58,15 @@ router.get('/', async (req, res) => {
  *          required: true
  *          dataType: string
  */
-router.get('/domainName', async (req, res) => {
-    const domain_name = req.query.domain_name;
+router.get('/domainName',
+    asyncErrorHandlerMiddle(
+        async (req, res) => {
+            const domain_name = req.query.domain_name;
 
-    try {
-        await accountsSVC.findByDomainName(domain_name);
-        res.status(204).json();
-    } catch (err) {
-        res.status(err.statusCode).json(err);
-    }
-});
+            await accountsSVC.findByDomainName(domain_name);
+            res.status(204).json();
+        }
+    ));
 
 
 
@@ -79,6 +76,7 @@ router.get('/domainName', async (req, res) => {
 router.use(oAuth2Server.authorise);
 
 
+// TODO make an appropriate association with a User. WARRNING!!! Association Logic is not implemented yet.
 /**
  * @swagger
  * path: /accounts
@@ -93,57 +91,28 @@ router.use(oAuth2Server.authorise);
  *      produces:
  *        - application/json
  *      parameters:
+ *        - name: Authorization
+ *          paramType: header
+ *          required: true
+ *          dataType: string
  *        - name: args
  *          paramType: body
  *          required: true
  *          dataType: PostAccountArgs
  */
-router.post('/', accountMiddle.validateCreateAccountArgs, async (req, res) => {
-    const args = req.body;
+router.post('/',
+    accountMiddle.validateCreateAccountArgs,
+    asyncErrorHandlerMiddle(
+        async (req, res) => {
+            const user_id = req.oauth.bearerToken.user_id;
+            const args = req.body;
 
-    try {
-        const data = await accountsSVC.createAccount(args);
-        res.status(201).json(data);
-    } catch (err) {
-        res.status(err.statusCode).json(err);
-    }
-});
+            const data = await accountsSVC.createAccount(user_id, args);
+            // TODO make a connection with a user. Logic is not implemented yet.
 
-/**
- * @swagger
- * path: /accounts/{accountId}/admin/email
- * operations:
- *   -  httpMethod: GET
- *      summary: GET Account ADMIN USER email
- *      notes: Returns String
- *      responseClass: string
- *      nickname: GET Account ADMIN mailer
- *      consumes:
- *        - application/json
- *      produces:
- *        - application/json
- *      parameters:
- *        - name: Authorization
- *          paramType: header
- *          required: true
- *          dataType: string
- *        - name: accountId
- *          paramType: path
- *          required: true
- *          dataType: integer
- */
-router.get('/:accountId/admin/email',
-    accountUsersMiddle.isAssociated,
-    async (req, res) => {
-        const account_id = req.params.accountId;
-
-        try {
-            const data = await accountUsersSVC.getAccountAdminEmail(account_id);
-            res.status(200).json(data);
-        } catch (err) {
-            res.status(err.statusCode).json(err);
+            res.status(201).json(data);
         }
-    });
+    ));
 
 
 module.exports = router;
@@ -190,8 +159,5 @@ module.exports = router;
  *          domain_name:
  *              type: string
  *              required: true
- *          description:
- *              type: text
- *              required: false
  *
  */

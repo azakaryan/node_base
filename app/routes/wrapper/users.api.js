@@ -13,7 +13,8 @@ const oAuth2Server = require('../../oauth2/').OAuth2Server;
 
 const middleware = require('../../middleware/'),
     passwordMiddle = middleware.Password,
-    userMiddle = middleware.User;
+    userMiddle = middleware.User,
+    asyncErrorHandlerMiddle = middleware.AsyncErrorHandler;
 
 const usersSVC = require('../../services/').Users;
 
@@ -38,20 +39,17 @@ const usersSVC = require('../../services/').Users;
  */
 router.post('/',
     userMiddle.validatePostUserArgs,
-    passwordMiddle.isValidPassword, async (req, res) => {
+    passwordMiddle.isValidPassword,
+    asyncErrorHandlerMiddle(
+        async (req, res) => {
+            const username = req.body.email,
+                password = crypto.createHash(req.body.password),
+                userType = req.body.userType || "CLIENT";          // By default the type is CLIENT
 
-        const username = req.body.email,
-            password = crypto.createHash(req.body.password),
-            accountDomainName = req.body.accountDomainName,
-            userType = req.body.userType || "CLIENT"; // By default the type is client
-
-        usersSVC.createUser(username, password, accountDomainName, userType).then((data) => {
+            const data = await usersSVC.createUser(username, password, userType);
             res.json(data);
-        }).catch((err) => {
-            res.status(err.statusCode).json(err);
-        });
-    });
-
+        }
+    ));
 
 /**
  * @swagger
@@ -72,17 +70,15 @@ router.post('/',
  *          required: true
  *          dataType: PostActivationArgs
  */
-router.post('/activation', (req, res) => {
+router.post('/activation',
+    asyncErrorHandlerMiddle(
+        async (req, res) => {
+            const key = req.body.key;
 
-    const key = req.body.key;
-
-    usersSVC.activate(key).then((data) => {
-        res.json(data);
-    }).catch((err) => {
-        res.status(err.statusCode).json(err);
-    });
-});
-
+            const data = await usersSVC.activate(key);
+            res.json(data);
+        }
+    ));
 
 /**
  * @swagger
@@ -103,52 +99,23 @@ router.post('/activation', (req, res) => {
  *          required: true
  *          dataType: PutActivationArgs
  */
-router.put('/activation', (req, res) => {
+router.put('/activation',
+    asyncErrorHandlerMiddle(
+        async (req, res) => {
+            const key = req.body.key;
 
-    const key = req.body.key;
-
-    usersSVC.updateActivation(key).then((data) => {
-        res.json(data);
-    }).catch((err) => {
-        res.status(err.statusCode).json(err);
-    });
-});
+            const data = await usersSVC.updateActivationKey(key);
+            res.json(data);
+        }
+    ));
 
 
-// Authorise all requests
+
+/********************************/
+/**** Authorise All Requests ****/
+/********************************/
 router.use(oAuth2Server.authorise);
 
-
-
-/**
- * @swagger
- * path: /users
- * operations:
- *   -  httpMethod: GET
- *      summary: Get Users by type
- *      notes : Returns All Users by type. Only Admin can retrieve this rout.
- *      responseClass: object Users User_Accounts Admin Client
- *      nickname: Get Users by type
- *      consumes:
- *        - application/json
- *      parameters:
- *        - name: Authorization
- *          paramType: header
- *          required: true
- *          dataType: string
- *      parameters:
- *        - name: type
- *          paramType: query
- *          required: true
- *          dataType: string
- */
-router.get('/', userMiddle.isAuthorised, (req, res) => {
-    usersSVC.getAllUserAccountsByUserType(req.query.type).then((data) => {
-        res.json(data);
-    }).catch((err) => {
-        res.status(err.statusCode).json(err);
-    });
-});
 
 
 /**
@@ -168,17 +135,15 @@ router.get('/', userMiddle.isAuthorised, (req, res) => {
  *          required: true
  *          dataType: string
  */
-router.get('/current', (req, res) => {
+router.get('/current',
+    asyncErrorHandlerMiddle(
+        async (req, res) => {
+            const user_id = req.oauth.bearerToken.user_id;
 
-    const user_id = req.oauth.bearerToken.user_id;
-
-    usersSVC.getCurrentUser(user_id).then((data) => {
-        res.json(data);
-    }).catch((err) => {
-        res.status(err.statusCode).json(err);
-    });
-});
-
+            const data = await usersSVC.getCurrentUser(user_id);
+            res.json(data);
+        }
+    ));
 
 /**
  * @swagger
@@ -197,18 +162,49 @@ router.get('/current', (req, res) => {
  *          required: true
  *          dataType: string
  */
-router.get('/current/accounts', async (req, res) => {
+router.get('/current/accounts',
+    asyncErrorHandlerMiddle(
+        async (req, res) => {
+            const user_id = req.oauth.bearerToken.user_id;
 
-    const user_id = req.oauth.bearerToken.user_id;
+            const data = await usersSVC.getUserAccounts(user_id);
+            res.json(data);
+        }
+    ));
 
-    try {
-        const data = await usersSVC.getUserAccounts(user_id);
-        res.json(data);
-    } catch (err) {
-        res.status(err.statusCode).json(err);
-    }
-});
 
+
+
+// TODO Think of general way of user ROlE checking
+// TODO One way is to have specific functions for each Role.  here for example we can have something called userMiddle.isAdmin
+// TODO Or we can have some general middleware called userMiddle.isAuthorised which will guess and check authorisation. However, we should some how specify an endpoint it tries to hit.
+// /**
+//  * @swagger
+//  * path: /users
+//  * operations:
+//  *   -  httpMethod: GET
+//  *      summary: Get Users by type
+//  *      notes : Returns All User Accounts. Only type ADMIN can retrieve this rout.
+//  *      responseClass: object Users User_Accounts Admin
+//  *      nickname: Get User Accounts
+//  *      consumes:
+//  *        - application/json
+//  *      parameters:
+//  *        - name: Authorization
+//  *          paramType: header
+//  *          required: true
+//  *          dataType: string
+//  */
+// router.get('/',
+//     userMiddle.isAuthorised,  userMiddle.isAdmin
+//     async (req, res) => {
+//         try {
+//             const data = await usersSVC.getAllUserAccounts();
+//             res.json(data);
+//         } catch (err) {
+//             res.status(err.statusCode).json(err);
+//         }
+//     });
 
 
 module.exports = router;
@@ -253,9 +249,6 @@ module.exports = router;
  *          type: string
  *          required: true
  *       password:
- *          type: string
- *          required: true
- *       accountDomainName:
  *          type: string
  *          required: true
  *       userType:
