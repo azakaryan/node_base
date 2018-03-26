@@ -11,6 +11,7 @@ const Routes = require('./app/routes/');
 const db = require('./app/db/db');
 const config = require('./app/config/').Config;
 const logger = require('./app/util/').Logger;
+const responseErrorHandler = require('./app/util/').ResponseHandler;
 const errorSVC = require('./app/services/').Error;
 
 
@@ -91,19 +92,22 @@ class App {
     }
 
     _errorHandler() {
-        // Error handler (middleware)
-        this.app.use((err, req, res, next) => {
-            errorSVC.errorHandler(err.stack, (new Date).toISOString(), this.env, err.status, err.name,
-                err.message).catch((err) => {
-                logger.warn(err.errorMessage);
-            });
+        // General Error handler (middleware)
+        this.app.use(async (err, req, res, next) => {
+            const error = responseErrorHandler.handleError(err);
 
-            res.status(err.status || 500).json({
-                statusCode: err.status || 500,
-                errorCode: err.name || 'InternalError',
-                errorMessage: err.message || 'The server encountered an internal error. Please retry the request.'
-            });
-            next();
+            try {
+                // Send an email to all maintainers with an Error log. If the "statusCode" is 500 and the "env" is production.
+                if (error.statusCode && error.statusCode === 500 && this.env === "production")
+                    await errorSVC.errorHandler(error.stack, (new Date).toISOString(), this.env, error.statusCode, error.name, error.message);
+
+                // Send Responce.
+                res.status(error.statusCode).json(error);
+
+                next();
+            } catch (e) {
+                logger.warn(e);
+            }
         });
     }
 }
