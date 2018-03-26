@@ -1,0 +1,57 @@
+{
+  "name": "Node Base",
+  "version": "1.0.0",
+  "description": "Node Base Skeleton App",
+  "keywords": [
+    "node.js",
+    "application"
+  ],
+  "author": {
+    "name": "Armen Zakaryan",
+    "email": "armen0089@gmail.com",
+    "url": "https://github.com/azakaryan"
+  },
+  "contributors": [
+    {
+      "name": "azakaryan",
+      "email": "armen0089@gmail.com"
+    }
+  ],
+  "homepage": "https://github.com/azakaryan/node_base",
+  "engines": {
+    "node": "6.10.2",
+    "npm": "4.5.0"
+  },
+  "dependencies": {
+    "express": "~4.15.2",
+    "body-parser": "~1.17.1",
+    "gulp": "^3.9.1",
+    "oauth2-server": "~2.4.1",
+    "bcrypt-nodejs": "~0.0.3",
+    "uuid": "~3.0.1",
+    "one-validation": "~2.2.0",
+    "swagger-express": "~1.0.5",
+    "swagger-ui": "~2.0.24",
+    "mongoose": "^5.0.3",
+    "mysql2": "^1.5.3",
+    "nodemailer": "~4.0.1",
+    "mustache": "~2.3.0",
+    "winston": "~2.3.1",
+    "morgan": "~1.8.1",
+    "rotating-file-stream": "~1.2.1",
+    "multer": "~1.3.0",
+    "lodash": "^4.17.5"
+  },
+  "devDependencies": {
+    "chai": "~3.5.0",
+    "mocha": "~3.3.0",
+    "supertest": "~3.0.0"
+  },
+  "private": false,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "debug": "node --debug server.js",
+    "test": "mocha --recursive --timeout 7000 test/integration/routes"
+  }
+}
