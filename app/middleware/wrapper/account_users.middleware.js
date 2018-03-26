@@ -1,11 +1,7 @@
 "use strict";
 
-const util = require('../../util/'),
-    responseHandler = util.ResponseHandler;
-
-const mysqlModels = require('../../models/').MySQL,
-    accountUsersModel = mysqlModels.AccountUsers;
-
+const responseHandler = require('../../util/').ResponseHandler;
+const accountUsersModel = require('../../models/').MySQL.AccountUsers;
 
 module.exports = {
 
