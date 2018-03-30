@@ -1,12 +1,6 @@
 "use strict";
 
-const util = require('../../util/'),
-    responseHandler = util.ResponseHandler;
-
-const mysqlModels = require('../../models/').MySQL,
-    accountUsersModel = mysqlModels.AccountUsers,
-    oauthModel = mysqlModels.Oauth;
-
+const accountUsersModel = require('../../models/').MySQL.AccountUsers;
 
 module.exports = {
 
@@ -23,32 +17,14 @@ module.exports = {
             account_id = req.query.accountId || req.body.accountId || req.params.accountId || res.locals.accountId;
 
         if (!account_id || !user_id)
-            return res.status(400).json({
-                statusCode: 400,
-                errorCode: 'MissingRequiredParameter',
-                errorMessage: 'Missing argument(s).'
-            });
+            throw {code: "MISSING_ARGUMENTS", args: {missing: `${user_id ? "" : "user_id, "}${account_id ? "" : "account_id"}`}};
 
-        try {
-            const association = await accountUsersModel.find_association(account_id, user_id);
-            if (!association.length)
-                return res.status(403).json({
-                    statusCode: 403,
-                    errorCode: 'InsufficientAccountPermissions',
-                    errorMessage: 'Not associated.'
-                });
-            if (association[0].role === 'READ_ONLY') // TODO move 'READ_ONLY' to some generic place, as well as handle role checking in one general helper module
-                return res.status(403).json({
-                    statusCode: 403,
-                    errorCode: 'InsufficientAccountPermissions',
-                    errorMessage: 'Need Admin level permission.'
-                });
+        const association = await accountUsersModel.find_association(account_id, user_id);
 
-            // if user is Admin, carry on
-            return next();
-        } catch (err) {
-            const err = responseHandler.handleError(error);
-            return res.status(err.statusCode).json(err);
-        }
+        // TODO should be refactored to handle roles generally
+        if (!association.length || association[0].role === 'READ_ONLY')
+            throw {code: "FORBIDDEN"};
+
+        return next();
     }
 };

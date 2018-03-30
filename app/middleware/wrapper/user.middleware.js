@@ -2,7 +2,6 @@
 
 const validator = require('one-validation');
 const expectedUserArguments = ["email", "password"];
-const errorHandler = require('../../util/').ResponseHandler;  // TODO modify ResponseHandler to errorHandler
 
 module.exports = {
 
@@ -20,14 +19,34 @@ module.exports = {
 
         // Validate Args Existence
         if (missingArgs.length)
-            return res.status(400).json( errorHandler.handleError( {code: "MISSING_ARGUMENTS", args: {missing: missingArgs.join(", ")}} ) );
+            throw {code: "MISSING_ARGUMENTS", args: {missing: missingArgs.join(", ")}};
 
         // Validate Email
         const email = req.body.email;
         if (!validator.email.test(email))
-            return res.status(400).json( errorHandler.handleError( {code: "INVALID_ARGUMENTS", args: {invalid: `email ${email}`}} ) );
+            throw {code: "INVALID_ARGUMENTS", args: {invalid: `email ${email}`}};
 
         // If Arguments Are Valid, Carry On
+        return next();
+    },
+
+    /**
+     * @type async function
+     * @access public
+     * @param req
+     * @param res
+     * @param next
+     * @description Validate User Activation Key Existence.
+     * @returns {async}
+     */
+    async validateUserActivationKeyExistence(req, res, next) {
+        const key = req.query.key;
+
+        // Validate Args Existence
+        if (!key)
+            throw {code: "MISSING_ARGUMENTS", args: {missing: "key"}};
+
+        // If Key Exists, Carry On
         return next();
     },
 

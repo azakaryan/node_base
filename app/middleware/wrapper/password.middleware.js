@@ -1,7 +1,5 @@
 "use strict";
 
-const errorHandler = require('../../util/').ResponseHandler;  // TODO modify ResponseHandler to errorHandler
-
 module.exports = {
 
     /**
@@ -16,12 +14,12 @@ module.exports = {
     async isValidPassword(req, res, next) {
         const password = req.body.password;
 
+        // TODO, Use validation library not to it manually.
         const regEx = /^[a-zA-Z0-9!@#$%^&*]{8,16}$/;
         const isValidPassword = regEx.test(password);
         if (!isValidPassword)
-            return res.status(400).json( errorHandler.handleError( {code: "INVALID_ARGUMENTS", args: {invalid: "Password is invalid."}} ) );
+            throw {code: "INVALID_ARGUMENTS", args: {invalid: "Password is invalid."}};
 
-        // If Arguments Are Valid, Carry On
         return next();
     }
 };

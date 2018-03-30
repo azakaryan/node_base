@@ -18,19 +18,11 @@ module.exports = {
 
         // Validate Expected Args Existence.
         if (missingArgs.length)
-            return res.status(400).json({
-                statusCode: 400,
-                errorCode: 'MissingRequiredBodyParameter',
-                errorMessage: `Missing args: ${missingArgs}.`
-            });
+            throw {code: "MISSING_ARGUMENTS", args: {missing: missingArgs}};
 
         // Validate Domain Name
         if (!oneValidation['domain'].test(req.body.domain_name))
-            return res.status(400).json({
-                statusCode: 400,
-                errorCode: 'InvalidInput',
-                errorMessage: 'The `domain_name` is not valid.'
-            });
+            throw {code: "INVALID_ARGUMENTS", args: {invalid: "The `domain_name` is not valid."}};
 
         return next();
     }
