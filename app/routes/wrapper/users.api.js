@@ -10,6 +10,7 @@
 const router = require('express').Router();
 const crypto = require('../../util/').Crypto;
 const oAuth2Server = require('../../oauth2/').OAuth2Server;
+const config = require('../../config/').Config;
 
 const middleware = require('../../middleware/'),
     passwordMiddle = middleware.Password,
@@ -37,10 +38,9 @@ const usersSVC = require('../../services/').Users;
  *          dataType: PostUserArgs
  *          description: userType is optional, default is `CLIENT`, possible values are `CLIENT` & `ADMIN`
  */
-router.post('/',
-    userMiddle.validatePostUserArgs,
-    passwordMiddle.isValidPassword,
-    asyncErrorHandlerMiddle(
+router.post('/', ...asyncErrorHandlerMiddle(
+        userMiddle.validatePostUserArgs,
+        passwordMiddle.isValidPassword,
         async (req, res) => {
             const username = req.body.email,
                 password = crypto.createHash(req.body.password),
@@ -55,7 +55,7 @@ router.post('/',
  * @swagger
  * path: /users/activation
  * operations:
- *   -  httpMethod: POST
+ *   -  httpMethod: GET
  *      summary: Activate user
  *      notes: Activate User
  *      responseClass: Db
@@ -65,50 +65,32 @@ router.post('/',
  *      produces:
  *        - application/json
  *      parameters:
- *        - name: body
- *          paramType: body
- *          required: true
- *          dataType: PostActivationArgs
+ *        - name: key
+ *          paramType: query
+ *          required: false
+ *          dataType: string
+ *          description: User activation key
  */
-router.post('/activation',
-    asyncErrorHandlerMiddle(
+router.get('/activation', ...asyncErrorHandlerMiddle(
+        userMiddle.validateUserActivationKeyExistence,
         async (req, res) => {
-            const key = req.body.key;
+            const key = req.query.key;
 
-            const data = await usersSVC.activate(key);
-            res.json(data);
+            try {
+                await usersSVC.activate(key);
+                res.redirect(`${config.website_url()}`);
+            } catch (e) {
+                if (e["message"] === "KEY_NOT_FOUND") {
+                    res.redirect(`${config.rest_url()}/html/key_404.html`);
+                } else if (e["message"] === "KEY_EXPIRED") {
+                    await usersSVC.updateActivationKey(key)
+                    res.redirect(`${config.rest_url()}/html/key_updated.html`);
+                } else {
+                    throw e;
+                }
+            }
         }
     ));
-
-/**
- * @swagger
- * path: /users/activation
- * operations:
- *   -  httpMethod: PUT
- *      summary: Update activation key
- *      notes: Update activation key
- *      responseClass: string
- *      nickname: Update activation key
- *      consumes:
- *        - application/json
- *      produces:
- *        - application/json
- *      parameters:
- *        - name: body
- *          paramType: body
- *          required: true
- *          dataType: PutActivationArgs
- */
-router.put('/activation',
-    asyncErrorHandlerMiddle(
-        async (req, res) => {
-            const key = req.body.key;
-
-            const data = await usersSVC.updateActivationKey(key);
-            res.json(data);
-        }
-    ));
-
 
 
 /********************************/
@@ -135,8 +117,7 @@ router.use(oAuth2Server.authorise);
  *          required: true
  *          dataType: string
  */
-router.get('/current',
-    asyncErrorHandlerMiddle(
+router.get('/current', ...asyncErrorHandlerMiddle(
         async (req, res) => {
             const user_id = req.oauth.bearerToken.user_id;
 
@@ -162,8 +143,7 @@ router.get('/current',
  *          required: true
  *          dataType: string
  */
-router.get('/current/accounts',
-    asyncErrorHandlerMiddle(
+router.get('/current/accounts', ...asyncErrorHandlerMiddle(
         async (req, res) => {
             const user_id = req.oauth.bearerToken.user_id;
 

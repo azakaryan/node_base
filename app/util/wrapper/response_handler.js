@@ -110,6 +110,10 @@ module.exports = {
                 err = new ErrorHandler(400, "MissingRequiredBodyParameter",  `Invalid args: ${error.args && error.args.invalid}`);
                 break;
 
+            case 'FORBIDDEN':
+                err = new ErrorHandler(403, "InsufficientPermissions",  `Don not have permission to access resource`);
+                break;
+
             /**
              * Unknown Errors
              */

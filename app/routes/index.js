@@ -35,7 +35,7 @@ module.exports = class Routes {
         this.swagger_apis = this.swagger_apis.concat(['./app/routes/index.js']);
 
         /** routing **/
-        app.use(config.rest_url(), router);
+        app.use(config.rest_endpoint_base_url(), router);
         router.use('/', main_router);
         this._use(this.main_apis);
     }

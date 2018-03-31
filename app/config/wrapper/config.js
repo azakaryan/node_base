@@ -41,8 +41,8 @@ const config = {
     development: {
         host: localEnv.host || '127.0.0.1', // local host to run the server
         port: localEnv.port || '9000',      // local port to run the server
-        web_host: 'localhost',
-        web_port: localEnv.port || '9000',
+        web_host: localEnv.web_host || 'localhost',
+        web_port: localEnv.web_port || '3000',
         protocol: localEnv.protocol || 'https',
 
         db: localEnv.db || {
@@ -55,15 +55,19 @@ const config = {
         },
         mongodbUrl: localEnv.mongodbUrl || 'mongodb://localhost:27017/node_base',
 
+        swagger_url: '/swagger',
         api_version: 'v1',
-        rest_url () {
+
+        rest_endpoint_base_url () {
             return `/api/${this.api_version}`;
         },
 
-        swagger_url: '/swagger',
+        rest_url () {
+            return `${this.protocol}://${this.host}:${this.port}`;
+        },
 
         website_url () {
-            return `${this.protocol}://${this.host}:${this.web_port}`;
+            return `${this.protocol}://${this.web_host}:${this.web_port}`;
         },
 
         settings: {
@@ -98,12 +102,16 @@ const config = {
         },
         mongodbUrl: 'mongodb://localhost:27017/node_base',
 
+        swagger_url: '/swagger',
         api_version: 'v1',
-        rest_url () {
+
+        rest_endpoint_base_url () {
             return `/api/${this.api_version}`;
         },
 
-        swagger_url: '/swagger',
+        rest_url () {
+            return `${this.protocol}://${this.host}:${this.port}`;
+        },
 
         website_url () {
             return `${this.protocol}://${this.web_host}:${this.web_port}`;

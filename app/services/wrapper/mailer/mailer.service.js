@@ -24,7 +24,7 @@ module.exports = {
      * @returns {async}
      */
     async sendAccountConfirmationEmail(email, key) {
-        const verification_url = `${config.website_url()}/#/activate?key=${key}`;
+        const verification_url = `${config.rest_url()}${config.rest_endpoint_base_url()}/users/activation?key=${key}`;
 
         logger.info('Sending Email...');
         logger.info(` Website URL: ${config.website_url()}`);

@@ -30,8 +30,7 @@ const accountsSVC = require('../../services/').Accounts;
  *      produces:
  *        - application/json
  */
-router.get('/',
-    asyncErrorHandlerMiddle(
+router.get('/', ...asyncErrorHandlerMiddle(
         async (req, res) => {
             const accounts = await accountsSVC.getAllAccounts();
             res.status(200).json(accounts);
@@ -58,8 +57,7 @@ router.get('/',
  *          required: true
  *          dataType: string
  */
-router.get('/domainName',
-    asyncErrorHandlerMiddle(
+router.get('/domainName', ...asyncErrorHandlerMiddle(
         async (req, res) => {
             const domain_name = req.query.domain_name;
 
@@ -100,9 +98,8 @@ router.use(oAuth2Server.authorise);
  *          required: true
  *          dataType: PostAccountArgs
  */
-router.post('/',
-    accountMiddle.validateCreateAccountArgs,
-    asyncErrorHandlerMiddle(
+router.post('/', ...asyncErrorHandlerMiddle(
+        accountMiddle.validateCreateAccountArgs,
         async (req, res) => {
             const user_id = req.oauth.bearerToken.user_id;
             const args = req.body;
