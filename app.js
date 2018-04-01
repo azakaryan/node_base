@@ -81,7 +81,7 @@ class App {
             swaggerURL: config.swagger_url,
             swaggerJSON: '/api-docs.json',
             swaggerUI: './node_modules/swagger-ui/dist',
-            basePath: `${config.protocol}://${config.web_host}:${config.web_port}${config.rest_url()}`,
+            basePath: `${config.rest_url()}${config.rest_endpoint_base_url()}`,
             apis: this.routes.swagger_apis,
             info: {
                 title: 'node base',
