@@ -33,7 +33,8 @@ async function _connectAndHandleDisconnect(db_config) {
         logger.warn(`MySQL connection error: ${err.code}`);
 
         // Delay before attempting to reconnect, to avoid a hot loop.
-        setTimeout(() => _connectAndHandleDisconnect(db_config), 5000);
+        await new Promise((res) => setTimeout(res, 5000));
+        return await _connectAndHandleDisconnect(db_config);
     }
 }
 
