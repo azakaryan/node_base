@@ -66,7 +66,7 @@ class App {
         fs.existsSync(logDir) || fs.mkdirSync(logDir, 0o777); // ensure log directory exists
         const requestLogStream = rfs('request.log', {interval: '1d', path: logDir}); // create a rotating write stream
         this.app.use(morgan('common', {stream: requestLogStream})); // setup the stream
-        this.env !== 'production' && this.app.use(morgan('dev')); // log each request
+        this.env === 'development' && this.app.use(morgan('dev')); // log each request
     }
 
     _requestParserSetup() {
