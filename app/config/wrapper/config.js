@@ -23,29 +23,16 @@ function _loadLocalEnv() {
     return env;
 }
 
-
-/**
- * @property {string}  host
- * @property {string}  port
- * @property {string}  protocol
- * @property {object}  db
- * @property {string}  mongodbUrl
- * @property {string}  api_version
- * @property {function}  rest_url
- * @property {string}  swagger_url
- * @property {function}  website_url
- * @property {object}  settings
- */
 const config = {
 
-    development: {
-        host: localEnv.host || '127.0.0.1', // local host to run the server
-        port: localEnv.port || '9000',      // local port to run the server
-        web_host: localEnv.web_host || 'localhost',
-        web_port: localEnv.web_port || '3000',
-        protocol: localEnv.protocol || 'https',
+    development: Object.assign({
+        host: '127.0.0.1', // local host to run the server
+        port: '9000',      // local port to run the server
+        web_host: 'localhost',
+        web_port: '3000',
+        protocol: 'https',
 
-        db: localEnv.db || {
+        db: {
             dialect: 'mysql',
             multipleStatements: true,
             host: '127.0.0.1',
@@ -53,7 +40,7 @@ const config = {
             password: '',
             database: 'node_base'
         },
-        mongodbUrl: localEnv.mongodbUrl || 'mongodb://localhost:27017/node_base',
+        mongodbUrl: 'mongodb://localhost:27017/node_base',
 
         swagger_url: '/swagger',
         api_version: 'v1',
@@ -81,11 +68,9 @@ const config = {
             password: "Vk3!6P8zK7Pw^,R",
             contact_support: 'https://github.com/azakaryan/node_base'
         }
-    },
+    }, localEnv),
 
-    staging: {},
-
-    production: {
+    production: Object.assign({
         host: '127.0.0.1', // local host to run the server
         port: '3000',   // local port to run the server
         web_host: 'app.node_base.com',
@@ -127,7 +112,54 @@ const config = {
             username: "azakaryantest@gmail.com",
             password: "Vk3!6P8zK7P\\w^,R"
         }
-    }
+    }, localEnv),
+
+
+    /* TEST ENV */
+    test: Object.assign({
+        host: '127.0.0.1', // local host to run the test server
+        port: '9001',      // local port to run the test server
+        web_host: 'localhost',
+        web_port: '3000',
+        protocol: 'https',
+
+        db: {
+            dialect: 'mysql',
+            multipleStatements: true,
+            host: '127.0.0.1',
+            user: 'root',
+            password: 'root',
+            database: 'node_base_test'
+        },
+        mongodbUrl: 'mongodb://localhost:27017/node_base_test',
+
+        swagger_url: '/swagger',
+        api_version: 'v1',
+
+        rest_endpoint_base_url () {
+            return `/api/${this.api_version}`;
+        },
+
+        rest_url () {
+            return `${this.protocol}://${this.host}:${this.port}`;
+        },
+
+        website_url () {
+            return `${this.protocol}://${this.web_host}:${this.web_port}`;
+        },
+
+        settings: {
+            ACTIVATION_KEY_EXPIRE_TIME: 60 * 60 * 1000, // 1 hour
+            FORGOT_PASSWORD_KEY_EXPIRE_TIME: 60 * 60 * 1000, // 1 hour
+            TEMPORARY_CSV_EXPIRE_TIME: 5 * 60 * 1000 // 5 min.
+        },
+
+        email: {
+            username: "azakaryantest@gmail.com",
+            password: "Vk3!6P8zK7Pw^,R",
+            contact_support: 'https://github.com/azakaryan/node_base'
+        }
+    })
 };
 
 module.exports = config[env];
