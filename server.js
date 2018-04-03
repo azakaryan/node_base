@@ -8,8 +8,10 @@ const https = require('https');
 const http = require('http');
 
 
-app.init().then(() => {
+async function init() {
     let server;
+
+    await app.init();
 
     /**
      * Create HTTPS / HTTP Server.
@@ -30,13 +32,7 @@ app.init().then(() => {
         logger.warn('Environment: ', app.env);
     });
 
-    server.on('error', onError);
-
-    /**
-     * Event listener for HTTP / HTTPS server "error" event.
-     */
-
-    function onError(error) {
+    server.on('error', (error) => {
         if (error.syscall !== 'listen')
             throw error;
 
@@ -57,5 +53,10 @@ app.init().then(() => {
             default:
                 throw error;
         }
-    }
-});
+    });
+
+    return app.app;
+};
+
+
+module.exports = init();
