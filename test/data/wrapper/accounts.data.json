@@ -1,0 +1,10 @@
+{
+  "success": {
+    "name": "test1.com",
+    "status": 204
+  },
+  "err": {
+    "name": "unknown.com",
+    "status": 404
+  }
+}
