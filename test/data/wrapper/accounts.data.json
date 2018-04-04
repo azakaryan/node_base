@@ -1,10 +1,18 @@
 {
   "success": {
-    "name": "test1.com",
+    "name": "test1",
+    "domain_name": "test1.com",
     "status": 204
   },
   "err": {
-    "name": "unknown.com",
+    "name": "unknown",
+    "domain_name": "unknown.com",
     "status": 404
+  },
+  "postSuccessData": {
+    "name": "test",
+    "domain_name": "test.com",
+    "status": 201
   }
+
 }

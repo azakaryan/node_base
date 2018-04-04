@@ -1,6 +1,6 @@
 "use strict";
 
-const chai_helper = require('../util/').Chai_Helper;
+const chai_helper = require('../../util/').Chai_Helper;
 
 /*
  * Global Setup for Integration Tests.
@@ -9,6 +9,8 @@ const chai_helper = require('../util/').Chai_Helper;
 before( async function() {
 
     await chai_helper.init();
+
+    this.expect = chai_helper.get_chai().expect;
 
     // TODO,
     // Before Running the tests empty the test database

@@ -52,6 +52,7 @@
   "scripts": {
     "start": "node server.js",
     "debug": "node --debug server.js",
-    "test": "NODE_ENV=test mocha --recursive --timeout 7000 test/integration/routes"
+    "test": "NODE_ENV=test mocha --recursive --timeout 7000 test/integration/",
+    "tst":  "NODE_ENV=test mocha --recursive --timeout 7000 test/unit/"
   }
 }

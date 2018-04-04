@@ -98,6 +98,11 @@ Local .env.js file
         ...
     };    
 
+Tests
+
+    to run integration tests type npm test
+    to run unit tests type npm tst // TODO make a general way of running tests and controlling the type from config.json
+
 OAuth2 
 
     How to get Auth token

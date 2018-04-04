@@ -50,7 +50,26 @@ module.exports = {
         const query = "INSERT INTO account SET name=?, domain_name=?";
 
         try {
-            const [rows] = await mysql.getConnection().execute(query, [name, domain_name]);
+            const [row] = await mysql.getConnection().execute(query, [name, domain_name]);
+            return row;
+        } catch (err) {
+            throw new Error(err);
+        }
+    },
+
+
+    /**
+     * @type async function
+     * @access public
+     * @param args
+     * @description Delete profile by domain_name.
+     * @returns {async}
+     */
+    async deleteByDomainName(domain_name) {
+        const query = "DELETE from account where domain_name=?";
+
+        try {
+            const [rows] = await mysql.getConnection().execute(query, [domain_name]);
             return rows;
         } catch (err) {
             throw new Error(err);
